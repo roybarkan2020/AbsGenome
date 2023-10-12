@@ -1,4 +1,4 @@
-# Omni-C analysis
+# Omni-C analysis (based on code from https://omni-c.readthedocs.io/en/latest/index.html)
 
 git clone https://github.com/dovetail-genomics/Omni-C.git
 
@@ -30,3 +30,22 @@ singularity run /fast/tmp/containers/pairtools-1.0.2.sif pairtools parse --min-m
 
 singularity run /fast/tmp/containers/pairtools-1.0.2.sif  pairtools sort --nproc 16 --tmpdir=temp/  parsed.pairsam > sorted.pairsam
 
+# Removing PCR duplicates
+
+pairtools dedup --nproc-in 8 --nproc-out 8 --mark-dups --output-stats stats.txt --output dedup.pairsam sorted.pairsam
+
+# Generating .pairs and bam files
+
+pairtools split --nproc-in 8 --nproc-out 8 --output-pairs mapped.pairs --output-sam unsorted.bam dedup.pairsam
+
+# Generating the final bam file
+
+samtools sort -@16 -T /home/ubuntu/ebs/temp/temp.bam -o mapped.PT.bam unsorted.bam
+
+samtools index mapped.PT.bam
+
+# Library QC
+
+python3 ./Omni-C/get_qc.py -p stats.txt
+
+preseq lc_extrap -bam -pe -extrap 2.1e9 -step 1e8 -seg_len 1000000000 -output out.preseq mapped.bam
