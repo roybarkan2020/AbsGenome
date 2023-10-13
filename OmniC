@@ -44,8 +44,3 @@ singularity run /fast/tmp/containers/samtools-1.16.1.sif samtools sort -@16 -T /
 
 singularity run /fast/tmp/containers/samtools-1.16.1.sif samtools index mapped.PT.bam
 
-# Library QC
-
-python3 ./Omni-C/get_qc.py -p stats.txt
-
-preseq lc_extrap -bam -pe -extrap 2.1e9 -step 1e8 -seg_len 1000000000 -output out.preseq mapped.bam
