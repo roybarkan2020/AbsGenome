@@ -1,46 +1,42 @@
 # Omni-C analysis (based on code from https://omni-c.readthedocs.io/en/latest/index.html)
 
-git clone https://github.com/dovetail-genomics/Omni-C.git
+$ git clone https://github.com/dovetail-genomics/Omni-C.git
 
 # Merge Omni-C reads (fastq.gz):
 
-cat Abalone_repeat_22FFKJLT3_TGAGCTAG-AACCGTTC_L007_R1.fastq.gz Abalone_repeat_22FFKJLT3_TGAGCTAG-AACCGTTC_L008_R1.fastq.gz > omni_merged_R1.fastq.gz
-
-cat Abalone_repeat_22FFKJLT3_TGAGCTAG-AACCGTTC_L007_R2.fastq.gz Abalone_repeat_22FFKJLT3_TGAGCTAG-AACCGTTC_L008_R2.fastq.gz > omni_merged_R2.fastq.gz
+cat AGRF_CAGRF230313856_22FFKJLT3/Abalone_repeat_22FFKJLT3_TGAGCTAG-AACCGTTC_L007_R1.fastq.gz AGRF_CAGRF230313856_22FFKJLT3/Abalone_repeat_22FFKJLT3_TGAGCTAG-AACCGTTC_L008_R1.fastq.gz AGRF_CAGRF230313856_HHNMYDRX3/Abalone_repeat_HHNMYDRX3_TGAGCTAG-GAACGGTT_L001_R1.fastq.gz > omni_merged_all_R1.fastq.gz
+cat AGRF_CAGRF230313856_22FFKJLT3/Abalone_repeat_22FFKJLT3_TGAGCTAG-AACCGTTC_L007_R2.fastq.gz AGRF_CAGRF230313856_22FFKJLT3/Abalone_repeat_22FFKJLT3_TGAGCTAG-AACCGTTC_L008_R2.fastq.gz AGRF_CAGRF230313856_HHNMYDRX3/Abalone_repeat_HHNMYDRX3_TGAGCTAG-GAACGGTT_L001_R2.fastq.gz > omni_merged_all_R2.fastq.gz
 
 # Index genome file:
 
-singularity run /fast/tmp/containers/samtools-1.16.1.sif samtools faidx Hal_Asi.asm.bp.p_ctg.fa
+$ singularity run /fast/tmp/containers/samtools-1.16.1.sif samtools faidx Hal_Asi.asm.bp.p_ctg.fa
+$ cut -f1,2 Hal_Asi.asm.bp.p_ctg.fa.fai > hal_asi_ctg.genome
+$ singularity run /fast/tmp/containers/bwa-0.7.17.sif bwa index Hal_Asi.asm.bp.p_ctg.fa
 
-cut -f1,2 Hal_Asi.asm.bp.p_ctg.fa.fai > hal_asi_ctg.genome
-
-singularity run /fast/tmp/containers/bwa-0.7.17.sif bwa index Hal_Asi.asm.bp.p_ctg.fa
-
-# From fastq to final valid pairs bam file
+# From .fastq to final valid pairs bam file
 
 # Alignment to the genome (long):
 
-bwa mem -5SP -T0 -t16 Genome/Hifiasm/Hal_Asi.asm.bp.p_ctg.fa Genome/OmniC/AGRF_CAGRF230313856_22FFKJLT3/omni_merged_R1.fastq.gz Genome/OmniC/AGRF_CAGRF230313856_22FFKJLT3/omni_merged_R2.fastq.gz -o aligned_omni.sam
+$ singularity run /fast/tmp/containers/bwa-0.7.17.sif bwa mem -5SP -T0 -t16 Genome/Hifiasm/Hal_Asi.asm.bp.p_ctg.fa Genome/OmniC/AGRF_CAGRF230313856_22FFKJLT3/omni_merged_all_R1.fastq.gz Genome/OmniC/AGRF_CAGRF230313856_22FFKJLT3/omni_merged_all_R2.fastq.gz -o aligned_omni_all.sam
 
 # Recording valid ligation events:
 
-singularity run /fast/tmp/containers/pairtools-1.0.2.sif pairtools parse --min-mapq 40 --walks-policy 5unique --max-inter-align-gap 30 --nproc-in 8 --nproc-out 8 --chroms-path Genome/Hifiasm/hal_asi_ctg.genome  aligned_omni.sam >  parsed.pairsam
+$ singularity run /fast/tmp/containers/pairtools-1.0.2.sif pairtools parse --min-mapq 40 --walks-policy 5unique --max-inter-align-gap 30 --nproc-in 8 --nproc-out 8 --chroms-path Genome/Hifiasm/hal_asi_ctg.genome  aligned_omni.sam >  parsed.pairsam
 
 # Sorting the pairsam file:
 
-singularity run /fast/tmp/containers/pairtools-1.0.2.sif  pairtools sort --nproc 16 --tmpdir=temp/  parsed.pairsam > sorted.pairsam
+$ singularity run /fast/tmp/containers/pairtools-1.0.2.sif  pairtools sort --nproc 16 --tmpdir=temp/  parsed.pairsam > sorted.pairsam
 
 # Removing PCR duplicates
 
-singularity run /fast/tmp/containers/pairtools-1.0.2.sif pairtools dedup --nproc-in 8 --nproc-out 8 --mark-dups --output-stats stats.txt --output dedup.pairsam sorted.pairsam
+$ singularity run /fast/tmp/containers/pairtools-1.0.2.sif pairtools dedup --nproc-in 8 --nproc-out 8 --mark-dups --output-stats stats.txt --output dedup.pairsam sorted.pairsam
 
 # Generating .pairs and bam files
 
-singularity run /fast/tmp/containers/pairtools-1.0.2.sif pairtools split --nproc-in 8 --nproc-out 8 --output-pairs mapped.pairs --output-sam unsorted.bam dedup.pairsam
+$ singularity run /fast/tmp/containers/pairtools-1.0.2.sif pairtools split --nproc-in 8 --nproc-out 8 --output-pairs mapped.pairs --output-sam unsorted.bam dedup.pairsam
 
 # Generating the final bam file
 
-singularity run /fast/tmp/containers/samtools-1.16.1.sif samtools sort -@16 -T /home/ubuntu/ebs/temp/temp.bam -o mapped.PT.bam unsorted.bam
-
-singularity run /fast/tmp/containers/samtools-1.16.1.sif samtools index mapped.PT.bam
+$ singularity run /fast/tmp/containers/samtools-1.16.1.sif samtools sort -@16 -T /home/ubuntu/ebs/temp/temp.bam -o mapped.PT.bam unsorted.bam
+$ singularity run /fast/tmp/containers/samtools-1.16.1.sif samtools index mapped.PT.bam
 
