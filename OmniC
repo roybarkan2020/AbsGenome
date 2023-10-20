@@ -4,8 +4,8 @@ $ git clone https://github.com/dovetail-genomics/Omni-C.git
 
 # Merge Omni-C reads (fastq.gz):
 
-cat AGRF_CAGRF230313856_22FFKJLT3/Abalone_repeat_22FFKJLT3_TGAGCTAG-AACCGTTC_L007_R1.fastq.gz AGRF_CAGRF230313856_22FFKJLT3/Abalone_repeat_22FFKJLT3_TGAGCTAG-AACCGTTC_L008_R1.fastq.gz AGRF_CAGRF230313856_HHNMYDRX3/Abalone_repeat_HHNMYDRX3_TGAGCTAG-GAACGGTT_L001_R1.fastq.gz > omni_merged_all_R1.fastq.gz
-cat AGRF_CAGRF230313856_22FFKJLT3/Abalone_repeat_22FFKJLT3_TGAGCTAG-AACCGTTC_L007_R2.fastq.gz AGRF_CAGRF230313856_22FFKJLT3/Abalone_repeat_22FFKJLT3_TGAGCTAG-AACCGTTC_L008_R2.fastq.gz AGRF_CAGRF230313856_HHNMYDRX3/Abalone_repeat_HHNMYDRX3_TGAGCTAG-GAACGGTT_L001_R2.fastq.gz > omni_merged_all_R2.fastq.gz
+$ cat AGRF_CAGRF230313856_22FFKJLT3/Abalone_repeat_22FFKJLT3_TGAGCTAG-AACCGTTC_L007_R1.fastq.gz AGRF_CAGRF230313856_22FFKJLT3/Abalone_repeat_22FFKJLT3_TGAGCTAG-AACCGTTC_L008_R1.fastq.gz AGRF_CAGRF230313856_HHNMYDRX3/Abalone_repeat_HHNMYDRX3_TGAGCTAG-GAACGGTT_L001_R1.fastq.gz > omni_merged_all_R1.fastq.gz
+$ cat AGRF_CAGRF230313856_22FFKJLT3/Abalone_repeat_22FFKJLT3_TGAGCTAG-AACCGTTC_L007_R2.fastq.gz AGRF_CAGRF230313856_22FFKJLT3/Abalone_repeat_22FFKJLT3_TGAGCTAG-AACCGTTC_L008_R2.fastq.gz AGRF_CAGRF230313856_HHNMYDRX3/Abalone_repeat_HHNMYDRX3_TGAGCTAG-GAACGGTT_L001_R2.fastq.gz > omni_merged_all_R2.fastq.gz
 
 # Index genome file:
 
@@ -17,11 +17,11 @@ $ singularity run /fast/tmp/containers/bwa-0.7.17.sif bwa index Hal_Asi.asm.bp.p
 
 # Alignment to the genome (long):
 
-$ singularity run /fast/tmp/containers/bwa-0.7.17.sif bwa mem -5SP -T0 -t16 Genome/Hifiasm/Hal_Asi.asm.bp.p_ctg.fa Genome/OmniC/AGRF_CAGRF230313856_22FFKJLT3/omni_merged_all_R1.fastq.gz Genome/OmniC/AGRF_CAGRF230313856_22FFKJLT3/omni_merged_all_R2.fastq.gz -o aligned_omni_all.sam
+$ singularity run /fast/tmp/containers/bwa-0.7.17.sif bwa mem -5SP -T0 -t16 Genome/Hifiasm/Hal_Asi.asm.bp.p_ctg.fa Genome/OmniC/omni_merged_all_R1.fastq.gz Genome/OmniC/omni_merged_all_R2.fastq.gz -o aligned_omni_all.sam
 
 # Recording valid ligation events:
 
-$ singularity run /fast/tmp/containers/pairtools-1.0.2.sif pairtools parse --min-mapq 40 --walks-policy 5unique --max-inter-align-gap 30 --nproc-in 8 --nproc-out 8 --chroms-path Genome/Hifiasm/hal_asi_ctg.genome  aligned_omni.sam >  parsed.pairsam
+$ singularity run /fast/tmp/containers/pairtools-1.0.2.sif pairtools parse --min-mapq 40 --walks-policy 5unique --max-inter-align-gap 30 --nproc-in 8 --nproc-out 8 --chroms-path Genome/Hifiasm/hal_asi_ctg.genome  aligned_omni_all.sam >  parsed.pairsam
 
 # Sorting the pairsam file:
 
@@ -37,6 +37,17 @@ $ singularity run /fast/tmp/containers/pairtools-1.0.2.sif pairtools split --npr
 
 # Generating the final bam file
 
-$ singularity run /fast/tmp/containers/samtools-1.16.1.sif samtools sort -@16 -T /home/ubuntu/ebs/temp/temp.bam -o mapped.PT.bam unsorted.bam
+$ singularity run /fast/tmp/containers/samtools-1.16.1.sif samtools sort -@16 -T temp/temp.bam -o mapped.PT.bam unsorted.bam
 $ singularity run /fast/tmp/containers/samtools-1.16.1.sif samtools index mapped.PT.bam
+
+# From .pairs to .hic contact matrix
+
+$ java -Xmx48000m  -Djava.awt.headless=true -jar Omni-C/juicertools.jar pre --threads 16 mapped.pairs contact_map.hic Genome/Hifiasm/hal_asi_ctg.genome
+
+# Scaffolding using yahs
+
+$ /home/jc748673/yahs/yahs /home/jc748673/Genome/Hifiasm/Hal_Asi.asm.bp.p_ctg.fa /home/jc748673/Omni-C/Output_omni/mapped.PT.bam
+
+
+
 
