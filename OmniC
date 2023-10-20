@@ -48,6 +48,17 @@ $ java -Xmx48000m  -Djava.awt.headless=true -jar Omni-C/juicertools.jar pre --th
 
 $ /home/jc748673/yahs/yahs /home/jc748673/Genome/Hifiasm/Hal_Asi.asm.bp.p_ctg.fa /home/jc748673/Omni-C/Output_omni/mapped.PT.bam
 
+# index scaffolds_final.fa
+$ samtools faidx yahs.out_scaffolds_final.fa
+
+# create *.chrom.sizes file
+$ awk '{print $1 " " $2}' yahs.out_scaffolds_final.fa.fai > scaffolds_final.chrom.sizes
+
+# Generate HiC contact maps
+
+$ /home/jc748673/Scaffolding/yahs/juicer pre /home/jc748673/Scaffolding/yahs/yahs.out.bin /home/jc748673/Scaffolding/yahs/yahs.out_scaffolds_final.agp /home/jc748673/Genome/Hifiasm/Hal_Asi.asm.bp.p_ctg.fa.fai | sort -k2,2d -k6,6d -T ./ --parallel=8 -S32G | awk 'NF' > alignments_sorted.txt.part && mv alignments_sorted.txt.part alignments_sorted.txt
+
+$ java -Xmx48000m  -Djava.awt.headless=true -jar /home/jc748673/Scaffolding/Omni-C/juicertools.jar pre /home/jc748673/Scaffolding/yahs/alignments_sorted.txt out.hic.part scaffolds_final.chrom.sizes && mv out.hic.part out.hic
 
 
 
