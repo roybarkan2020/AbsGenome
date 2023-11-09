@@ -1,4 +1,6 @@
-# Omni-C analysis (based on code from https://omni-c.readthedocs.io/en/latest/index.html)
+# Omni-C analysis (based on code from https://omni-c.readthedocs.io/en/latest/index.html) - Make sure you got the following tools installed: pysam, tabulate, bedtools, matplotlib, pandas, bwa, pairtools, samtools, preseq. 
+
+# Download Omni-C scripts
 
 ```{bash}
 
