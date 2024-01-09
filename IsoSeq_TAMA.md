@@ -99,13 +99,17 @@ blastp -evalue 1e-10 -num_threads 16 -db /home/jc748673/Scaffolding/test_polish/
 
 # Concatanate all of the nine blastp outputs
 
+```{bash}
+
+cat blastp_1.o2487621 blastp_2.o2487631 blastp_3.o2487635 blastp_4.o2487636 blastp_5.o2487638 blastp_6.o2487639 blastp_7.o2487640 blastp_8.o2487641 blastp_9.o2487642 > blastp_orf
+
+```
 
 # Parsing the Blastp output file for top hits
 
 ```{bash}
 
-python tama_orf_blastp_parser.py -b ${blastp} -o ${outfile}
-python tama_orf_blastp_parser.py -b ${blastp} -o ${outfile} -f ensembl
+python /home/jc748673/tama/tama_go/orf_nmd_predictions/tama_orf_blastp_parser.py -b /home/jc748673/Scaffolding/test_polish/isoseq_polished/blastp_orf -o /home/jc748673/Scaffolding/test_polish/isoseq_polished/blastp_orf_parsing
 
 ```
 
