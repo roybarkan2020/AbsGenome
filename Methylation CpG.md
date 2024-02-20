@@ -34,3 +34,9 @@ aligned_bam_to_cpg_scores \
   --model models/pileup_calling_model.v1.tflite \
   --threads 16
 ```
+
+You can now visualise the data with IGV by uploading the following file: 
+1. Genome file and index
+2. The bam file of the soft-clipped HiFi reads to the genome (the sorted and indexed output of minimap2)
+3. The outputs from the aligned_bam_to_cpg_scores step (bed and bigwig files).
+Once uploaded, right-click the bam file track and choose "Color alignments by -> base modification (5mC)". 
