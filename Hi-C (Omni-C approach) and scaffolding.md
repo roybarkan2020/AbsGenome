@@ -1,4 +1,4 @@
-# Omni-C analysis (based on code from https://omni-c.readthedocs.io/en/latest/index.html) 
+# Hi-C analysis (Omni-C approach, code based on workflow from https://omni-c.readthedocs.io/en/latest/index.html) 
 
 ## Download Omni-C scripts
 
