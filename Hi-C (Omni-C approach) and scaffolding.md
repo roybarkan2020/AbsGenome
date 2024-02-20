@@ -1,35 +1,39 @@
-# Omni-C analysis (based on code from https://omni-c.readthedocs.io/en/latest/index.html) - Make sure you got the following tools installed: pysam, tabulate, bedtools, matplotlib, pandas, bwa, pairtools, samtools, preseq. 
+# Omni-C analysis (based on code from https://omni-c.readthedocs.io/en/latest/index.html) 
 
-# Download Omni-C scripts
+## Download Omni-C scripts
 
-```{bash}
-
+```
 git clone https://github.com/dovetail-genomics/Omni-C.git
-
 ```
 
-# Merge Omni-C reads (fastq.gz):
+## Merge Omni-C reads (fastq.gz):
+In some cases, your paired-end Hi-C data will be sequenced in multiple lanes. Usually, you will receive the data for each lane separately. In this case, you should merge all forward reads into one file and all reverse reads into one file.  To do so, use:
 
-```{bash}
-
-# Forward reads:
-cat AGRF_CAGRF230313856_22FFKJLT3/Abalone_repeat_22FFKJLT3_TGAGCTAG-AACCGTTC_L007_R1.fastq.gz AGRF_CAGRF230313856_22FFKJLT3/Abalone_repeat_22FFKJLT3_TGAGCTAG-AACCGTTC_L008_R1.fastq.gz AGRF_CAGRF230313856_HHNMYDRX3/Abalone_repeat_HHNMYDRX3_TGAGCTAG-GAACGGTT_L001_R1.fastq.gz > omni_merged_all_R1.fastq.gz
-
-# Reverse reads:
-cat AGRF_CAGRF230313856_22FFKJLT3/Abalone_repeat_22FFKJLT3_TGAGCTAG-AACCGTTC_L007_R2.fastq.gz AGRF_CAGRF230313856_22FFKJLT3/Abalone_repeat_22FFKJLT3_TGAGCTAG-AACCGTTC_L008_R2.fastq.gz AGRF_CAGRF230313856_HHNMYDRX3/Abalone_repeat_HHNMYDRX3_TGAGCTAG-GAACGGTT_L001_R2.fastq.gz > omni_merged_all_R2.fastq.gz
-
+1. Forward reads:
 ```
-# Index genome file:
-```{bash}
-
-singularity run /fast/tmp/containers/samtools-1.16.1.sif samtools faidx Hal_Asi.asm.bp.p_ctg.fa
-
-cut -f1,2 Hal_Asi.asm.bp.p_ctg.fa.fai > hal_asi_ctg.genome
-
-singularity run /fast/tmp/containers/bwa-0.7.17.sif bwa index Hal_Asi.asm.bp.p_ctg.fa
+cat R1_lane001.fastq.gz R1_lane002.fastq.gz R1_lane003.fastq.gz > all_R1.fastq.gz
+```
+2. Reverse reads:
+```
+cat R2_lane001.fastq.gz R2_lane002.fastq.gz R2_lane003.fastq.gz > all_R2.fastq.gz
 ```
 
-# From .fastq to final valid pairs bam file
+## Index your genome assembly file:
+```
+samtools faidx genome.fa
+```
+
+## Use the index file to generate the genome file
+```
+cut -f1,2 genome.fa.fai > genome.genome
+```
+
+## Generate a bwa index file
+```
+bwa index genome.fa
+```
+
+## From .fastq to final valid pairs bam file
 
 # Alignment to the genome (long):
 ```{bash}
