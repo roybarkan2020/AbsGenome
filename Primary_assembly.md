@@ -41,7 +41,7 @@ meryl print \
 ```
 
 
-## Use k-mer counts from Meryl as input for Merqury (https://github.com/marbl/merqury) and GenomeScope https://github.com/schatzlab/genomescope to assess quality and completeness of genome assemblies 
+## Use k-mer counts from Meryl as input for Merqury (https://github.com/marbl/merqury) and GenomeScope/GenomeScope2.0 (https://github.com/schatzlab/genomescope, https://github.com/tbenavi1/genomescope2.0) to assess quality and completeness of genome assemblies 
 
 ```
 merqury.sh output.meryldb output_name.hic.p_ctg.fa output_merqury
