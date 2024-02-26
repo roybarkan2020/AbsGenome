@@ -10,3 +10,5 @@ The sequencing data for this assembly included PacBio HiFi reads (Sequel II plat
 4. Mitochondrial genome assembly
 5. CpG methylation - Measuring DNA methylation across the genome
 
+
+![alt text](https://github.com/roybarkan2020/AbsGenome/blob/main/Picture%201.png)"Logo Title Text 1")
