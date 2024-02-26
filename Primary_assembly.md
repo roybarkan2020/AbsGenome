@@ -58,9 +58,3 @@ busco -i output_name.hic.p_ctg.fa -m genome --auto-lineage-euk
 ```
  python quast.py --threads 16 --eukaryote --large -o quast_output_name output_name.hic.p_ctg.fa
 ```
-
-
-
-
-
-```
