@@ -22,31 +22,45 @@ For the next stages, you will want to convert the assembly files from .gfa files
 awk '/^S/{print ">"$2;print $3}' output_name.hic.p_ctg.gfa > output_name.hic.p_ctg.fa
 ```
 
-## Run BUSCO on the assembly (https://busco.ezlab.org/busco_userguide.html#getting-started)
-Run BUSCO with the appropriate lineage database. 
-```
-busco -i output_name.hic.p_ctg.fa -m genome --auto-lineage-euk
-```
+## QC steps
 
-## Run QUAST to evaluate genome assemblies (https://quast.sourceforge.net/docs/manual.html#sec2)
-```
- python quast.py --threads 16 --eukaryote --large -o quast_output_name output_name.hic.p_ctg.fa
-```
+### Run Meryl, genomic k-mer counter and sequence utility (https://github.com/marbl/merqury)
 
-## Run Meryl, genomic k-mer counter and sequence utility (https://github.com/marbl/merqury)
 ```
 meryl print \
   union \
     count k=20 HiFi_reads_filtered.fq.gz output.meryldb
 ```
 
+### Use k-mer counts from Meryl as input for Merqury (https://github.com/marbl/merqury) and GenomeScope/GenomeScope2.0 (https://github.com/schatzlab/genomescope, https://github.com/tbenavi1/genomescope2.0) to assess quality and completeness of genome assemblies 
 
-## Use k-mer counts from Meryl as input for Merqury (https://github.com/marbl/merqury) and GenomeScope/GenomeScope2.0 (https://github.com/schatzlab/genomescope, https://github.com/tbenavi1/genomescope2.0) to assess quality and completeness of genome assemblies 
+
+GenomeScope can be used as a command line or in the web tool http://genomescope.org/
+
+```
+genomescope.R output.meryldb k-mer_length read_length output_dir
+```
 
 ```
 merqury.sh output.meryldb output_name.hic.p_ctg.fa output_merqury
 ```
-GenomeScope can be used as a command line or in the web tool http://genomescope.org/
+
+
+### Run BUSCO on the assembly (https://busco.ezlab.org/busco_userguide.html#getting-started)
+Run BUSCO with the appropriate lineage database. 
+
 ```
-genomescope.R output.meryldb k-mer_length read_length output_dir
+busco -i output_name.hic.p_ctg.fa -m genome --auto-lineage-euk
+```
+
+### Run QUAST to evaluate genome assemblies (https://quast.sourceforge.net/docs/manual.html#sec2)
+
+```
+ python quast.py --threads 16 --eukaryote --large -o quast_output_name output_name.hic.p_ctg.fa
+```
+
+
+
+
+
 ```
