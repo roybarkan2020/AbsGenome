@@ -11,4 +11,4 @@ The sequencing data for this assembly included PacBio HiFi reads (Sequel II plat
 5. CpG methylation - Measuring DNA methylation across the genome
 
 
-![alt text](https://github.com/roybarkan2020/AbsGenome/blob/main/Picture%201.png)"*Haliotis asinina* genome")
+![alt text](https://github.com/roybarkan2020/AbsGenome/blob/main/Picture%201.png)*Haliotis asinina* genome)
