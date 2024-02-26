@@ -68,6 +68,8 @@ yahs genome.fa mapped.bam -o yahs.out
 ```
 
 ### From .pairs to .hic contact matrix
+
+This step is done using Juicer (https://github.com/aidenlab/juicer). More tools from Aiden Lab are available for manual curation and analysis of Hi-C data (https://github.com/aidenlab)
 ```
 java -Xmx48000m  -Djava.awt.headless=true -jar juicertools.jar pre --threads 16 mapped.pairs contact_map.hic genome.genome
 ```
