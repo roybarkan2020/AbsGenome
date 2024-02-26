@@ -35,54 +35,54 @@ bwa index genome.fa
 
 ## From .fastq to final valid pairs bam file
 
-# Alignment to the genome (long):
+### Alignment to the genome (long):
 ```
 bwa mem -5SP -T0 -t16 genome.fa HiC_R1.fastq.gz HiC_R2.fastq.gz -o aligned.sam
 ```
-# Recording valid ligation events:
+### Recording valid ligation events:
 ```
 pairtools parse --min-mapq 40 --walks-policy 5unique --max-inter-align-gap 30 --nproc-in 8 --nproc-out 8 --chroms-path genome.genome  aligned.sam >  parsed.pairsam
 ```
-# Sorting the pairsam file:
+### Sorting the pairsam file:
 ```
 pairtools sort --nproc 16 --tmpdir=temp/  parsed.pairsam > sorted.pairsam
 ```
-# Removing PCR duplicates
+### Removing PCR duplicates
 ```
 pairtools dedup --nproc-in 8 --nproc-out 8 --mark-dups --output-stats stats.txt --output dedup.pairsam sorted.pairsam
 ```
-# Generating .pairs and bam files
+### Generating .pairs and bam files
 ```
 pairtools split --nproc-in 8 --nproc-out 8 --output-pairs mapped.pairs --output-sam unsorted.bam dedup.pairsam
 ```
-# Generating the final bam file (and index)
+### Generating the final bam file (and index)
 ```
 samtools sort -@16 -T temp/temp.bam -o mapped.bam unsorted.bam
 ```
 ```
 samtools index mapped.bam
 ```
-# Scaffolding using yahs
+## Scaffolding using yahs (https://github.com/c-zhou/yahs)
 ```
 yahs genome.fa mapped.bam -o yahs.out
 ```
 
-# From .pairs to .hic contact matrix
+### From .pairs to .hic contact matrix
 ```
 java -Xmx48000m  -Djava.awt.headless=true -jar juicertools.jar pre --threads 16 mapped.pairs contact_map.hic genome.genome
 ```
 
-# index scaffolds_final.fa
+### index scaffolds_final.fa
 ```
 samtools faidx yahs.out.fa
 ```
 
-# create *.chrom.sizes file
+### create *.chrom.sizes file
 ```
 awk '{print $1 " " $2}' yahs.out.fa.fai > yahs_scaffolds_final.chrom.sizes
 ```
 
-# Generate HiC contact maps
+### Generate HiC contact maps
 ```
 juicer pre yahs.out.bin yahs.out.agp genome.fa.fai | sort -k2,2d -k6,6d -T ./ --parallel=8 -S32G | awk 'NF' > alignments_sorted.txt.part && mv alignments_sorted.txt.part alignments_sorted.txt
 ```
