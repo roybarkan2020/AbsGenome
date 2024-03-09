@@ -2,6 +2,7 @@
 
 **MitoHiFi** allows the assembly of mitochondrial genomes with raw Pacbio HiFi reads (flag -r) or from the assembled contigs/scaffolds (flag -c).
 In addition, you should download the mitochondrial genome assembly of the most closely related species (fasta file and genebank file are required). This can be done by using findMitoReference.py script (provided with the tool). 
+There is a great YouTube video (**BGA 2023**) by the author of the tool (**Marcela Uliano-Silva**) which is recommended to watch: [MitoHiFi_BGA2023]: https://github.com/lifeparticle/Markdown-Cheatsheet](https://www.youtube.com/watch?v=1NWHC2zkRmg&t=1036s
 
 ## This is the line of code used for the abalone mitochondrial genome assembly
 
