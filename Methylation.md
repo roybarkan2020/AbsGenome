@@ -1,6 +1,6 @@
-# Methylation calling from PacBio's HiFi reads (https://github.com/PacificBiosciences/pb-CpG-tools)
-This workflow will generate site methylation probabilities from mapped HiFi reads. 
-
+# Methylation calling from PacBio's HiFi reads 
+**This workflow will generate site methylation probabilities from mapped HiFi reads.** 
+For additional info about the tool go to [pb-CpG-tools](https://github.com/PacificBiosciences/pb-CpG-tools)
 ## Map HiFi reads (raw with 5mC base modification tags and values - MM/ML) to the final genome assembly using minimap2 or pbmm2 (A minimap2 SMRT wrapper for PacBio data - https://github.com/PacificBiosciences/pbmm2)
 This step must be done using soft-clipping (-Y flag) to allow the MM and ML tags to remain valid and interpretable. Please note that this step takes time and will produce a large BAM file (proportional to the genome size). 
 ```
