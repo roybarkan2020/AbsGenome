@@ -14,11 +14,11 @@ In some cases, your paired-end Hi-C data will be sequenced in multiple lanes. Us
 
 1. Forward reads:
 ```
-cat R1_lane001.fastq.gz R1_lane002.fastq.gz R1_lane003.fastq.gz > HiC_R1.fastq.gz
+cat R1_lane001.fastq.gz R1_lane002.fastq.gz R1_lane003.fastq.gz > OmniC.R1.fastq.gz
 ```
 2. Reverse reads:
 ```
-cat R2_lane001.fastq.gz R2_lane002.fastq.gz R2_lane003.fastq.gz > HiC_R2.fastq.gz
+cat R2_lane001.fastq.gz R2_lane002.fastq.gz R2_lane003.fastq.gz > OmniC.R2.fastq.gz
 ```
 
 ## Pre-alignment steps 
@@ -49,7 +49,7 @@ For the **library complexity** step [click here](https://omni-c.readthedocs.io/e
 
 ### Alignment to the genome (long):
 ```
-bwa mem -5SP -T0 -t16 genome.fa HiC_R1.fastq.gz HiC_R2.fastq.gz -o aligned.sam
+bwa mem -5SP -T0 -t16 genome.fa OmniC.R1.fastq.gz OmniC.R2.fastq.gz -o aligned.sam
 ```
 ### Recording valid ligation events:
 ```
@@ -76,6 +76,20 @@ samtools sort -@16 -T temp/temp.bam -o mapped.bam unsorted.bam
 ```
 samtools index mapped.bam
 ```
+
+**There is an option of running it all using one command by piping all of the above.** This can be done using:
+
+```
+bwa mem -5SP -T0 -t<cores> <ref.fa> <OmniC.R1.fastq.gz> <OmniC.R2.fastq.gz>| \
+pairtools parse --min-mapq 40 --walks-policy 5unique \
+--max-inter-align-gap 30 --nproc-in <cores> --nproc-out <cores> --chroms-path <ref.genome> | \
+pairtools sort --tmpdir=<full_path/to/tmpdir> --nproc <cores>|pairtools dedup --nproc-in <cores> \
+--nproc-out <cores> --mark-dups --output-stats <stats.txt>|pairtools split --nproc-in <cores> \
+--nproc-out <cores> --output-pairs <mapped.pairs> --output-sam -|samtools view -bS -@<cores> | \
+samtools sort -@<cores> -o <mapped.PT.bam>;samtools index <mapped.PT.bam>
+```
+
+**Moving on to the scaffolding:**
 
 ## Scaffolding using [YaHS](https://github.com/c-zhou/yahs)
 
