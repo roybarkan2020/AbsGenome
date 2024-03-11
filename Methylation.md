@@ -3,7 +3,7 @@
 **This workflow will generate site methylation probabilities from mapped HiFi reads.** 
 For additional info about the tool go to [pb-CpG-tools](https://github.com/PacificBiosciences/pb-CpG-tools)
 
-## Map HiFi reads to the final genome assembly using minimap2 or pbmm2 ([A minimap2 SMRT wrapper for PacBio data](https://github.com/PacificBiosciences/pbmm2))
+## Map HiFi reads to the final genome assembly using minimap2 or A minimap2 SMRT wrapper for PacBio data [pbmm2](https://github.com/PacificBiosciences/pbmm2)
 
 **This step must be done using soft-clipping (-Y flag)** to allow the MM and ML tags (embedded in the raw reads file) to remain valid and interpretable. Please note that this step takes time and will produce a large output file (proportional to the genome size). 
 
@@ -21,7 +21,7 @@ samtools view -Sb -o CpG.bam CpG.sam
 samtools sort -O bam -o sorted_CpG.bam CpG.bam
 ```
 
-### Run this to Make sure that the MM/ML (methylation tags) were retained in your output file from the last step (CpG.bam file)
+<table><tr><td>Run this to Make sure that the MM/ML (methylation tags) were retained in your output file from the last step (CpG.bam file)</td></tr></table>
 
 ```
 samtools view aln_CpG.bam | head -n 1 | tr '\t' '\n' | less -S
