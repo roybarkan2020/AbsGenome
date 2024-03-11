@@ -3,13 +3,13 @@
 This is a general workflow for genome assembly of a non-model organism (tropical abalone, Haliotis asinina, marine invertebrate) using PacBio HiFi reads, and Hi-C (Omni-C approach, Dovetail genomics) reads. 
 Start with adapters removal and reads QC. At the end of this workflow, you should have your primary assembly (contigs level, polished with Hi-C reads) and basic stats. With Hifiasm, you can use different modes according to your data availability (i.e., HiFi reads only, Hi-C integration, Trio binning, Ultra-long ONT integration). 
 
-## Convert .bam to .fastq and remove reads with remnant PacBio adapter sequences (https://github.com/sheinasim/HiFiAdapterFilt)
+## Convert .bam to .fastq and remove reads with remnant PacBio adapter sequences [HiFiAdapterFilt](https://github.com/sheinasim/HiFiAdapterFilt)
 Usually, you will get your HiFi reads as bam files. this command will convert the file to fastq format (the required input for Hifiasm) and remove adapter sequences and remnant reads.  
 ```
 hifiadapterfilt.sh -p HiFi_reads.bam -t 16 -o HiFi_reads_filtered.fq.gz
 ```
 
-## Assembly with HiFi (adapter-free) and Hi-C reads (https://hifiasm.readthedocs.io/en/latest/hic-assembly.html#hic-assembly](https://github.com/chhylp123/hifiasm)
+## Assembly with HiFi (adapter-free) and Hi-C reads [Hifiasm](https://hifiasm.readthedocs.io/en/latest/hic-assembly.html#hic-assembly)
 If you have Hi-C (Illumina) paired reads from multiple lanes, you should concatenate/merge all forward (-h1) reads together and reverse (-h2) reads together. 
 
 ```
