@@ -77,7 +77,7 @@ samtools sort -@16 -T temp/temp.bam -o mapped.bam unsorted.bam
 samtools index mapped.bam
 ```
 
-**There is an option of running it all using one command by piping all of the above.** This can be done using:
+<table><tr><td>**There is an option of running it all using one command by piping all of the above.** This can be done using:</td></tr></table>
 
 ```
 bwa mem -5SP -T0 -t<cores> <ref.fa> <OmniC.R1.fastq.gz> <OmniC.R2.fastq.gz>| \
