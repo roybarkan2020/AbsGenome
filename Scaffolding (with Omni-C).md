@@ -1,4 +1,7 @@
-# Hi-C analysis (Omni-C approach, code based on workflow from https://omni-c.readthedocs.io/en/latest/index.html) 
+# Hi-C analysis 
+
+The following provides the steps used for Scaffolding the abalone genome using Omni-C data. 
+**Omni-C approach**, code for the analysis and Hi-C maps is based on workflow from [Omni-C’s documentation - Dovetail Genomics](https://omni-c.readthedocs.io/en/latest/index.html). The scaffolding was done using [YaHS](https://github.com/c-zhou/yahs)
 
 ## Download Omni-C scripts
 
@@ -56,35 +59,45 @@ pairtools dedup --nproc-in 8 --nproc-out 8 --mark-dups --output-stats stats.txt 
 pairtools split --nproc-in 8 --nproc-out 8 --output-pairs mapped.pairs --output-sam unsorted.bam dedup.pairsam
 ```
 ### Generating the final bam file (and index)
+
 ```
 samtools sort -@16 -T temp/temp.bam -o mapped.bam unsorted.bam
 ```
+
 ```
 samtools index mapped.bam
 ```
-## Scaffolding using yahs (https://github.com/c-zhou/yahs)
+
+## Scaffolding using [YaHS](https://github.com/c-zhou/yahs)
+
 ```
 yahs genome.fa mapped.bam -o yahs.out
 ```
 
 ### From .pairs to .hic contact matrix
 
-This step is done using Juicer (https://github.com/aidenlab/juicer). More tools from Aiden Lab are available for manual curation and analysis of Hi-C data (https://github.com/aidenlab)
+
+This step is done using [Juicer - AidenLab](https://github.com/aidenlab/juicer). 
+More tools from **Aiden Lab** are available for manual curation and analysis of Hi-C data [AidenLab](https://github.com/aidenlab)
+
 ```
 java -Xmx48000m  -Djava.awt.headless=true -jar juicertools.jar pre --threads 16 mapped.pairs contact_map.hic genome.genome
 ```
 
 ### index scaffolds_final.fa
+
 ```
 samtools faidx yahs.out.fa
 ```
 
 ### create *.chrom.sizes file
+
 ```
 awk '{print $1 " " $2}' yahs.out.fa.fai > yahs_scaffolds_final.chrom.sizes
 ```
 
 ### Generate HiC contact maps
+
 ```
 juicer pre yahs.out.bin yahs.out.agp genome.fa.fai | sort -k2,2d -k6,6d -T ./ --parallel=8 -S32G | awk 'NF' > alignments_sorted.txt.part && mv alignments_sorted.txt.part alignments_sorted.txt
 ```
@@ -92,6 +105,8 @@ juicer pre yahs.out.bin yahs.out.agp genome.fa.fai | sort -k2,2d -k6,6d -T ./ --
 ```
 java -Xmx48000m  -Djava.awt.headless=true -jar juicertools.jar pre alignments_sorted.txt out.hic.part yahs_scaffolds_final.chrom.sizes && mv out.hic.part out.hic
 ```
+
+out.hic can be used to visualise the Hi-C heatmap using **JuiceBox**
 
 
 
