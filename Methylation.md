@@ -21,7 +21,7 @@ samtools view -Sb -o CpG.bam CpG.sam
 samtools sort -O bam -o sorted_CpG.bam CpG.bam
 ```
 
-<table><tr><td>Run this to Make sure that the MM/ML (methylation tags) were retained in your output file from the last step (CpG.bam file)</td></tr></table>
+<table><tr><td>Run this to make sure that the MM/ML (methylation tags) were retained in your output file from the last step (CpG.bam file)</td></tr></table>
 
 ```
 samtools view aln_CpG.bam | head -n 1 | tr '\t' '\n' | less -S
