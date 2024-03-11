@@ -21,20 +21,29 @@ cat R1_lane001.fastq.gz R1_lane002.fastq.gz R1_lane003.fastq.gz > HiC_R1.fastq.g
 cat R2_lane001.fastq.gz R2_lane002.fastq.gz R2_lane003.fastq.gz > HiC_R2.fastq.gz
 ```
 
-## Index your genome assembly file:
+## Pre-alignment steps 
+
+### Index genome assembly file:
+
 ```
 samtools faidx genome.fa
 ```
 
-## Use the index file to generate the genome file
+### Use the index file to generate the genome file
+
 ```
 cut -f1,2 genome.fa.fai > genome.genome
 ```
 
-## Generate a bwa index file
+### Generate a BWA index file
+
 ```
 bwa index genome.fa
 ```
+
+Library QC and library complexity were both performed by the sequencing service provider as part of the project. **These steps are not described in this workflow.** 
+For the **library QC** step [click here](https://omni-c.readthedocs.io/en/latest/library_qc.html#)
+For the **library complexity** step [click here](https://omni-c.readthedocs.io/en/latest/library_qc.html#library-complexity) 
 
 ## From .fastq to final valid pairs bam file
 
