@@ -27,7 +27,8 @@ For the next stages, you will want to convert the assembly files from .gfa files
 awk '/^S/{print ">"$2;print $3}' output_name.hic.p_ctg.gfa > output_name.hic.p_ctg.fa
 ```
 
-## QC steps
+
+## QC steps (before the assembly)
 
 <table><tr><td>BEFORE THE ASSEMBLY. To get some basic stats and estimations for the genome you are about to assemble (good luck!!!), you can start with the raw reads.</td></tr></table>
 
@@ -46,6 +47,7 @@ meryl print \
 genomescope.R output.meryldb k-mer_length read_length output_dir
 ```
 
+## QC steps (after the assembly)
 
 <table><tr><td>AFTER THE ASSEMBLY.</td></tr></table>
 
