@@ -8,7 +8,7 @@ ls H_liver-flnc.bam H_gonad-flnc.bam H_eyes-flnc.bam H_gills-flnc.bam H_tentacle
 isoseq3 cluster flnc_all.fofn clustered.bam --use-qvs
 
 Align Full Length Non Chemiric (FLNC) reads to ref genome
-pbmm2 align /home/jc748673/Scaffolding/yahs/yahs.out_scaffolds_final.fa /home/jc748673/Genome/IsoSeq/IsoSeq_Analysis/clustered.hq.bam aln.all_hq.bam --sort --preset ISOSEQ --log-level INFO
+pbmm2 align yahs.out_scaffolds_final.fa clustered.hq.bam aln.all_hq.bam --sort --preset ISOSEQ --log-level INFO
 
 Collapse sorted aligned isoseq (bam)
 isoseq3 collapse aln.all.bam alz.collapsed.all.gff
@@ -17,7 +17,7 @@ isoseq3 collapse aln.all.bam alz.collapsed.all.gff
 
 ```{bash}
 
-minimap2 -ax splice -uf -C5  /home/jc748673/Scaffolding/test_polish/yahs_polished.out_scaffolds_final.fa /home/jc748673/Genome/IsoSeq/IsoSeq_Analysis/High_Quality_Isoforms.fasta > aln_iso_hq_polished.sam
+minimap2 -ax splice -uf -C5  yahs_polished.out_scaffolds_final.fa High_Quality_Isoforms.fasta > aln_iso_hq_polished.sam
 
 ```
 
@@ -35,7 +35,7 @@ samtools sort aln_iso_hq_polished.sam -O sam -o aln_iso_hq_polished_sort.sam
 
 ```{bash}
 
-singularity run /fast/tmp/containers/python-2.7.17.sif python /home/jc748673/tama/tama_collapse.py -s /home/jc748673/Scaffolding/test_polish/isoseq_polished/aln_iso_hq_polished_sort.sam -f /home/jc748673/Scaffolding/test_polish/yahs_polished.out_scaffolds_final.fa -p /home/jc748673/Scaffolding/test_polish/isoseq_polished/iso_hq_tama_polished -x no_cap
+python tama_collapse.py -s aln_iso_hq_polished_sort.sam -f yahs_polished.out_scaffolds_final.fa -p iso_hq_tama_polished -x no_cap
 
 ```
 
@@ -43,7 +43,7 @@ singularity run /fast/tmp/containers/python-2.7.17.sif python /home/jc748673/tam
 
 ```{bash}
 
-singularity run /fast/tmp/containers/python-2.7.17.sif python /home/jc748673/tama/tama_collapse.py -s /home/jc748673/Scaffolding/test_polish/isoseq_polished/aln_iso_hq_polished_sort.sam -f /home/jc748673/Scaffolding/test_polish/yahs_polished.out_scaffolds_final.fa -p /home/jc748673/Scaffolding/test_polish/isoseq_polished/iso_hq_tama_polished_capped -x capped
+python tama_collapse.py -s aln_iso_hq_polished_sort.sam -f yahs_polished.out_scaffolds_final.fa -p iso_hq_tama_polished_capped -x capped
 
 ```
 
@@ -51,7 +51,7 @@ singularity run /fast/tmp/containers/python-2.7.17.sif python /home/jc748673/tam
 
 ```{bash}
 
-singularity run /fast/tmp/containers/python-2.7.17.sif python /home/jc748673/tama/tama_go/file_stats/tama_degradation_signature.py -c /home/jc748673/Scaffolding/test_polish/isoseq_polished/iso_hq_tama_polished_capped_trans_read.bed -nc /home/jc748673/Scaffolding/test_polish/isoseq_polished/iso_hq_tama_polished_trans_read.bed -o /home/jc748673/Scaffolding/test_polish/isoseq_polished/tama_degradation_signature
+python tama_degradation_signature.py -c iso_hq_tama_polished_capped_trans_read.bed -nc iso_hq_tama_polished_trans_read.bed -o tama_degradation_signature
 
 ```
 
@@ -59,7 +59,7 @@ singularity run /fast/tmp/containers/python-2.7.17.sif python /home/jc748673/tam
 
 ```{bash}
 
-python /home/jc748673/tama/tama_merge.py -f /home/jc748673/Scaffolding/test_polish/isoseq_polished/filelist.txt -p /home/jc748673/Scaffolding/test_polish/isoseq_polished/merged_annos
+python tama_merge.py -f filelist.txt -p merged_annos
 
 ```
 
@@ -67,8 +67,8 @@ python /home/jc748673/tama/tama_merge.py -f /home/jc748673/Scaffolding/test_poli
 
 ```{bash}
 
-/home/jc748673/Scaffolding/test_polish/isoseq_polished/iso_hq_tama_polished_capped.bed	capped	1,1,1	caplib
-/home/jc748673/Scaffolding/test_polish/isoseq_polished/iso_hq_tama_polished.bed	capped	2,1,1	nocaplib
+iso_hq_tama_polished_capped.bed	capped	1,1,1	caplib
+iso_hq_tama_polished.bed	capped	2,1,1	nocaplib
 
 ```
 
@@ -76,7 +76,7 @@ python /home/jc748673/tama/tama_merge.py -f /home/jc748673/Scaffolding/test_poli
 
 ```{bash}
 
-bedtools getfasta -name -split -s -fi /home/jc748673/Scaffolding/test_polish/yahs_polished.out_scaffolds_final.fa -bed /home/jc748673/Scaffolding/test_polish/isoseq_polished/merged_annos.bed -fo /home/jc748673/Scaffolding/test_polish/isoseq_polished/merge_anno_bed_to_fa
+bedtools getfasta -name -split -s -fi yahs_polished.out_scaffolds_final.fa -bed isoseq_polished/merged_annos.bed -fo merge_anno_bed_to_fa
 
 ```
 
@@ -84,7 +84,7 @@ bedtools getfasta -name -split -s -fi /home/jc748673/Scaffolding/test_polish/yah
 
 ```{bash}
 
-python /home/jc748673/tama/tama_go/orf_nmd_predictions/tama_orf_seeker.py -f /home/jc748673/Scaffolding/test_polish/isoseq_polished/merge_anno_bed_to_fa -o /home/jc748673/Scaffolding/test_polish/isoseq_polished/orf_aa_merged_polished
+python tama_orf_seeker.py -f merge_anno_bed_to_fa -o orf_aa_merged_polished
 
 ```
 
@@ -92,14 +92,14 @@ python /home/jc748673/tama/tama_go/orf_nmd_predictions/tama_orf_seeker.py -f /ho
 
 ```{bash}
 
-python /home/jc748673/tama/tama_go/split_files/tama_fasta_splitter.py /home/jc748673/Scaffolding/test_polish/isoseq_polished/orf_aa_merged_polished /home/jc748673/Scaffolding/test_polish/isoseq_polished/split_orf_aa_merged_polished num_splits
+python tama_fasta_splitter.py orf_aa_merged_polished split_orf_aa_merged_polished num_splits
 
 ```
 # Make the Uniprot/Uniref/Whatever protein database file to a blastp database file
 
 ```{bash}
 
-makeblastdb -in /home/jc748673/Scaffolding/test_polish/isoseq_polished/uniprot_sprot.fasta -dbtype prot
+makeblastdb -in uniprot_sprot.fasta -dbtype prot
 
 ```
 
@@ -108,7 +108,7 @@ makeblastdb -in /home/jc748673/Scaffolding/test_polish/isoseq_polished/uniprot_s
 
 ```{bash}
 
-blastp -evalue 1e-10 -num_threads 16 -db /home/jc748673/Scaffolding/test_polish/isoseq_polished/uniprot_sprot.fasta -query /home/jc748673/Scaffolding/test_polish/isoseq_polished/split_orf_aa_merged_polished_1.fa
+blastp -evalue 1e-10 -num_threads 16 -db uniprot_sprot.fasta -query split_orf_aa_merged_polished.fa
 
 ```
 
@@ -116,7 +116,7 @@ blastp -evalue 1e-10 -num_threads 16 -db /home/jc748673/Scaffolding/test_polish/
 
 ```{bash}
 
-cat blastp_1.o2487621 blastp_2.o2487631 blastp_3.o2487635 blastp_4.o2487636 blastp_5.o2487638 blastp_6.o2487639 blastp_7.o2487640 blastp_8.o2487641 blastp_9.o2487642 > blastp_orf
+cat blastp_1 blastp_2 blastp_3 blastp_4 blastp_5 blastp_6 blastp_7 blastp_8 blastp_9 > blastp_orf
 
 ```
 
@@ -124,7 +124,7 @@ cat blastp_1.o2487621 blastp_2.o2487631 blastp_3.o2487635 blastp_4.o2487636 blas
 
 ```{bash}
 
-python /home/jc748673/tama/tama_go/orf_nmd_predictions/tama_orf_blastp_parser.py -b /home/jc748673/Scaffolding/test_polish/isoseq_polished/blastp_orf -o /home/jc748673/Scaffolding/test_polish/isoseq_polished/blastp_orf_parsing
+python tama_orf_blastp_parser.py -b blastp_orf -o blastp_orf_parsing
 
 ```
 
